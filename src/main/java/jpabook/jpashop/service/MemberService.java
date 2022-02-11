@@ -45,4 +45,14 @@ public class MemberService {
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
+
+    /**
+     * 회원 변경
+     */
+    @Transactional
+    public void update(Long id, String name) {
+
+        Member findMember = memberRepository.findOne(id);
+        findMember.setName(name);
+    }
 }

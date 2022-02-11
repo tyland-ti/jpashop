@@ -1,0 +1,71 @@
+package jpabook.jpashop.api;
+
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.service.MemberService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+
+@RestController
+@RequiredArgsConstructor
+public class MemberApiController {
+
+    private final MemberService memberService;
+
+    @PostMapping("/api/v1/members")
+    public CreateMemberResponse saveMemverV1(@RequestBody @Valid Member member) {
+
+        Long memberId = memberService.join(member);
+        return new CreateMemberResponse(memberId);
+
+    }
+
+    @PostMapping("/api/v2/members")
+    public  CreateMemberResponse saveMemverV2(@RequestBody @Valid CreateMemberRequest request) {
+
+        Member member = new Member();
+        member.setName(request.name);
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
+    }
+
+    @PutMapping("api/v2/members/{id}")
+    public UpdateMemberResponse updateMemverV2(@PathVariable("id") Long id,
+                                               @RequestBody @Valid UpdateMemverRequest request) {
+
+        memberService.update(id, request.name);
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+
+    @Data
+    private class CreateMemberResponse {
+        private Long id;
+
+        public CreateMemberResponse(Long memberId) {
+            this.id = memberId;
+        }
+    }
+
+    @Data
+    static class CreateMemberRequest {
+        @NotEmpty
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class UpdateMemberResponse {
+        private Long id;
+        private String name;
+    }
+
+    @Data
+    static class UpdateMemverRequest {
+        private String name;
+    }
+}
