@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +45,21 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
     }
 
+    @GetMapping("api/v1/members")
+    public List<Member> memberV1() {
+        return memberService.findMembers();
+    }
+
+    @GetMapping("api/v2/members")
+    public Result memberV2() {
+        List<Member> members = memberService.findMembers();
+        List<memberDto> collect = members.stream()
+                .map(m -> new memberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect.size(),collect);
+
+    }
     @Data
     private class CreateMemberResponse {
         private Long id;
@@ -66,6 +84,19 @@ public class MemberApiController {
 
     @Data
     static class UpdateMemverRequest {
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class memberDto {
         private String name;
     }
 }
