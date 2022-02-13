@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain.Item;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpabook.jpashop.domain.Category;
 import jpabook.jpashop.exception.NotEnougthStockException;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Item {
     private int stockQuantity;
 
     @ManyToMany(mappedBy = "items")
+    @JsonIgnore
     private List<Category> categories = new ArrayList<>();
 
     //비지니스 로직 추가
