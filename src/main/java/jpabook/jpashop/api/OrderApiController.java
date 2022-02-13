@@ -8,6 +8,7 @@ import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -49,8 +50,9 @@ public class OrderApiController {
     }
 
     @GetMapping("api/v3.1/orders")
-    public List<collectOrderDto> orderV3_page() {
-        List<Order> order =  orderRepository.findAll();
+    public List<collectOrderDto> orderV3_page(@RequestParam(value = "offset") int offset,
+                                              @RequestParam(value = "limit") int limit) {
+        List<Order> order =  orderRepository.findAllWithMember(offset, limit);
         return order.stream()
                 .map(o -> new collectOrderDto(o))
                 .collect(Collectors.toList());
