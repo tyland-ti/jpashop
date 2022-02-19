@@ -3,6 +3,7 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.api.dto.OrderQueryDto;
 import jpabook.jpashop.api.dto.collectOrderDto;
 import jpabook.jpashop.api.dto.orderDto;
+import jpabook.jpashop.api.dto.orderFlatDto;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItems;
 import jpabook.jpashop.repository.OrderRepository;
@@ -82,5 +83,13 @@ public class OrderApiController {
     @GetMapping("api/v5/orders")
     public List<OrderQueryDto> orderV5() {
         return orderQueryRepository.findAll_optimize();
+    }
+
+    /**
+     * JPA to DTO
+     * 플랫 데이터 최적화화     */
+    @GetMapping("api/v6/orders")
+    public List<orderFlatDto> orderV6() {
+        return orderQueryRepository.findAll_flat();
     }
 }

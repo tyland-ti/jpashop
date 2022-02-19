@@ -2,6 +2,7 @@ package jpabook.jpashop.repository.query;
 
 import jpabook.jpashop.api.dto.OrderItemQueryDto;
 import jpabook.jpashop.api.dto.OrderQueryDto;
+import jpabook.jpashop.api.dto.orderFlatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,10 +28,10 @@ public class OrderQueryRepository {
     }
 
     private List<OrderItemQueryDto> findOrderItem(Long id) {
-       return em.createQuery("select new jpabook.jpashop.api.dto.OrderItemQueryDto(oi.order.id,i.name, i.price, oi.count) " +
-                "from OrderItems oi " +
-                "join oi.item i " +
-                "where oi.order.id = :orderId", OrderItemQueryDto.class)
+        return em.createQuery("select new jpabook.jpashop.api.dto.OrderItemQueryDto(oi.order.id,i.name, i.price, oi.count) " +
+                        "from OrderItems oi " +
+                        "join oi.item i " +
+                        "where oi.order.id = :orderId", OrderItemQueryDto.class)
                 .setParameter("orderId", id)
                 .getResultList();
     }
@@ -53,7 +54,7 @@ public class OrderQueryRepository {
     }
 
     private List<OrderItemQueryDto> findOrderItem_optimize(List<Long> ids) {
-        return  em.createQuery("select new jpabook.jpashop.api.dto.OrderItemQueryDto(oi.order.id,i.name, i.price, oi.count) " +
+        return em.createQuery("select new jpabook.jpashop.api.dto.OrderItemQueryDto(oi.order.id,i.name, i.price, oi.count) " +
                         "from OrderItems oi " +
                         "join oi.item i " +
                         "where oi.order.id in :orderIds", OrderItemQueryDto.class)
@@ -68,6 +69,17 @@ public class OrderQueryRepository {
                         " from Order o " +
                         "join o.member m " +
                         "join o.delivery d", OrderQueryDto.class)
+                .getResultList();
+    }
+
+    public List<orderFlatDto> findAll_flat() {
+
+        return em.createQuery("select new jpabook.jpashop.api.dto.orderFlatDto(o.id, m.name, o.orderDate, o.status, m.address, i.name, oi.orderPrice, oi.count) " +
+                        "from Order o " +
+                        "join o.member m " +
+                        "join o.delivery d " +
+                        "join o.orderItems oi " +
+                        "join oi.item i", orderFlatDto.class)
                 .getResultList();
     }
 }
